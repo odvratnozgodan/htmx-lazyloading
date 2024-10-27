@@ -1,6 +1,6 @@
 FROM gradle:8.2.0-jdk17 AS build
 
-EXPOSE 8000
+EXPOSE 8080
 
 RUN mkdir /appbuild
 COPY . /appbuild
