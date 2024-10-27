@@ -2,7 +2,6 @@
 val kotlin_version: String by project
 val logback_version: String by project
 val kotlinx_html_version: String by project
-val ktor_version: String by project
 
 plugins {
     kotlin("jvm") version "2.0.21"

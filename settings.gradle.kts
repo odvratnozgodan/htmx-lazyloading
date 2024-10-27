@@ -1,1 +1,1 @@
-rootProject.name = "solutions.deliverit.lazyloading"
+rootProject.name = "lazyloading"
