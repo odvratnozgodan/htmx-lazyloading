@@ -1,17 +1,14 @@
 package com.example.presentation
 
-import com.example.model.product.Product
 import kotlinx.html.DIV
 import kotlinx.html.HTML
 import kotlinx.html.body
-import kotlinx.html.button
 import kotlinx.html.div
 import kotlinx.html.h1
 import kotlinx.html.head
 import kotlinx.html.id
 import kotlinx.html.img
 import kotlinx.html.meta
-import kotlinx.html.p
 import kotlinx.html.script
 import kotlinx.html.style
 import kotlinx.html.unsafe
@@ -53,7 +50,7 @@ fun HTML.homePage() {
                 }
             """
         }
-        script{
+        script {
             unsafe {
                 +"""
                 function isElementVisible(elementId) {
@@ -74,14 +71,23 @@ fun HTML.homePage() {
     }
     body {
         div("container max-w-screen-xl mx-auto px-4") {
-            // Code for loading the initial data from the server. This data contains the initial list of products
-            // but only as placeholders.
+            /*
+            Code for loading the initial data from the server. This data contains the initial list of products
+             but only as placeholders.
+            */
+            // The endpoint that will return the initial data
             attributes["hx-get"] = "/products"
+            // Trigger when the page is loaded
             attributes["hx-trigger"] = "load"
-            attributes["hx-swap"] = "outerHTML"
+            // Target this element when replacing the data
             attributes["hx-target"] = "#items"
+            // Swap the outer HTML of the element. This is because we structured the response in that way
+            attributes["hx-swap"] = "outerHTML"
+            // Specify id of indicator we want to use for this request
             attributes["hx-indicator"] = "#spinner"
             h1("font-medium text-black text-3xl md:text-4xl my-5") { +"""Products""" }
+
+            // This is just a indicator for showing the loading state.
             div("htmx-indicator w-full flex items-center justify-center mb-5") {
                 id = "spinner"
                 div("relative") {
@@ -102,37 +108,3 @@ fun DIV.productsGrid(block: DIV.() -> Unit = {}) {
     }
 }
 
-fun DIV.productElement(elementId:Int, product: Product?){
-    div("flex flex-col rounded-md p-2 gap-2 bg-gray-200 min-h-64") {
-        id="product_$elementId"
-        if(product == null){
-            // Code for loading the item data from the server
-            val timeout = 1.5f
-            attributes["hx-get"] = "/product/$elementId"
-            attributes["hx-target"] = "#product_$elementId"
-            attributes["hx-trigger"] = "load[isElementVisible(\"product_$elementId\")],every ${timeout}s [isElementVisible(\"product_$elementId\")]"
-            attributes["hx-swap"] = "outerHTML"
-        }
-
-        product?.let {
-            productElementContent(it)
-        }
-    }
-}
-
-fun DIV.productElementContent(product: Product){
-    img(classes = "max-h-48 aspect-auto object-cover") {
-        src = product.thumbnail
-        alt = "productThumb_${product.id}"
-    }
-    p("font-medium text-black text-lg") { +product.title }
-    p("font-regular text-black text-base") { +product.description }
-    div("inline-flex justify-between items-center") {
-        p("font-medium text-black text-2xl") { +"${String.format("%.2f", product.price)}$" }
-        button(
-            classes = "px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
-        ) {
-            +"""Add to cart"""
-        }
-    }
-}

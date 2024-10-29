@@ -3,6 +3,7 @@ package com.example.plugins
 import com.example.data.repository.ProductsRepository
 import com.example.presentation.homePage
 import com.example.presentation.productElement
+import com.example.presentation.productPlaceholder
 import com.example.presentation.productsGrid
 import io.ktor.server.application.*
 import io.ktor.server.html.respondHtml
@@ -10,11 +11,9 @@ import io.ktor.server.http.content.staticFiles
 import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlinx.coroutines.delay
 import kotlinx.html.div
 import kotlinx.html.stream.createHTML
 import java.io.File
-import kotlin.random.Random
 
 fun Application.configureRouting() {
     routing {
@@ -32,9 +31,10 @@ fun Application.configureRouting() {
             val response = jobsRepository.getProducts()
             call.respondText {
                 createHTML().div{
+                    // Render the products grid with placeholder.
                     productsGrid {
                         response.forEach {
-                            productElement(it.id, null)
+                            productPlaceholder(it.id)
                         }
                     }
                 }.toString()
@@ -47,7 +47,8 @@ fun Application.configureRouting() {
             response?.let {
                 call.respondText {
                     createHTML().div{
-                        productElement(response.id, response)
+                        // Render the product with the actual data.
+                        productElement(response)
                     }.toString()
                 }
             } ?: throw BadRequestException("No job with id")
